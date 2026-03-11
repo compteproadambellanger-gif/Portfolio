@@ -10,6 +10,13 @@
 </head>
 <body>
 
+  <!-- SCROLL PROGRESS BAR -->
+  <div id="scroll-progress"></div>
+
+  <!-- CURSEUR PERSONNALISÉ -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
   <!-- SCÈNE 3D (blobs + étoiles) -->
   <div class="three-container"></div>
 
@@ -77,6 +84,45 @@
     </div>
   </div>
 
+  <div id="modal-univers" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <div class="modal-body">
+        <h2>Manchester City Universe</h2>
+        <div class="modal-tags">
+          <span class="modal-tag">PHP</span>
+          <span class="modal-tag">MySQL</span>
+          <span class="modal-tag">Chart.js</span>
+          <span class="modal-tag">OAuth Google</span>
+        </div>
+        <p>
+          Application web complète de gestion du club Manchester City développée
+          dans le cadre du module Développement Web Backend. Le projet repose sur une architecture PHP/MySQL avec
+          un système d'authentification multi-rôles.
+        </p>
+        <p>
+          <strong>3 rôles distincts :</strong><br>
+          – <span style="color:#00d4ff;font-weight:600;">Staff</span> — CRUD complet joueurs &amp; matchs, saisie de stats, dashboard avec graphiques Chart.js, gestion des utilisateurs.<br>
+          – <span style="color:#a3e635;font-weight:600;">Joueur</span> — Dashboard personnalisé avec ses propres statistiques match par match (buts, passes, notes…).<br>
+          – <span style="color:#fb923c;font-weight:600;">Supporter</span> — Zone fan : dernier match, forme récente, top buteur/passeur, intégration vidéo YouTube.
+        </p>
+        <p>
+          <strong>Fonctionnalités clés :</strong>
+          recherche temps réel + pagination, upload photo de profil/joueur,
+          fiche individuelle avec graphique, mode sombre/clair, connexion Google OAuth.
+        </p>
+        <a
+          href="https://github.com/compteproadambellanger-gif/ProjetUniversManCity"
+          target="_blank"
+          rel="noreferrer"
+          class="btn-modal"
+        >
+          Voir sur GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-scripts" class="modal-overlay">
     <div class="modal-content">
       <button class="close-modal">&times;</button>
@@ -99,6 +145,24 @@
       </div>
     </div>
   </div>
+
+  <!-- STATS SIDEBAR -->
+  <aside id="stats-sidebar" class="delayed-entry">
+    <div class="sidebar-stat">
+      <div class="stat-number" data-count="4">0</div>
+      <div class="stat-label">Expériences</div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-stat">
+      <div class="stat-number" data-count="4">0</div>
+      <div class="stat-label">Projets</div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-stat">
+      <div class="stat-number" data-count="2">0</div>
+      <div class="stat-label">Ans de<br>formation</div>
+    </div>
+  </aside>
 
   <!-- NAVIGATION -->
   <nav class="github-pill delayed-entry">
@@ -125,7 +189,7 @@
   <!-- ACCUEIL -->
   <section id="accueil" class="hero delayed-entry">
     <div id="hero-content">
-      <h1>Adam Bellanger</h1>
+      <h1 id="hero-title">Adam Bellanger</h1>
       <h3>PORTFOLIO</h3>
       <div class="hero-badge">
         Étudiant <strong>BTS SIO</strong> | Infrastructure &amp; Réseau
@@ -331,6 +395,15 @@
           </div>
           <div class="bubble-glow" style="background: rgba(46, 204, 113, 0.4);"></div>
         </div>
+
+        <div class="bubble-project" onclick="openModal('modal-univers')">
+          <div class="bubble-content">
+            <i class="fas fa-futbol project-icon-main"></i>
+            <h4 class="project-title">ProjetUnivers ManCity</h4>
+            <span class="project-tech">PHP / MySQL / Chart.js</span>
+          </div>
+          <div class="bubble-glow" style="background: rgba(108, 171, 221, 0.4);"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -381,7 +454,7 @@
   <!-- FOOTER -->
   <footer id="simple-footer">
     <div class="footer-line"></div>
-    <p>Made by Adam Bellanger 2026 &copy;</p>
+    <p>Made by Adam Bellanger 2025 &copy;</p>
   </footer>
 
   <!-- SCRIPTS -->
@@ -394,6 +467,11 @@
   </script>
   <script type="module" src="js/threescene.js"></script>
   <script src="js/ui.js"></script>
+
+  <!-- SCROLL-TO-TOP -->
+  <button id="scroll-top-btn" title="Retour en haut">
+    <i class="fas fa-chevron-up"></i>
+  </button>
 
 </body>
 </html>
