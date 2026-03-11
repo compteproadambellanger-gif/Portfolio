@@ -227,6 +227,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // 9b) Barres de progression apprentissage
+  (function initLearningBars() {
+    const bars = document.querySelectorAll('.learning-bar-fill[data-width]');
+    if (!bars.length) return;
+    const barObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.style.width = entry.target.dataset.width + '%';
+        barObs.unobserve(entry.target);
+      });
+    }, { threshold: 0.3 });
+    bars.forEach(function (bar) { barObs.observe(bar); });
+  })();
+
   // 9) Compteurs animés
   function initCounters() {
     const stats = document.querySelectorAll('.stat-number[data-count]');

@@ -1,8 +1,189 @@
+<?php
+// ═══════════════════════════════════════════════════════════════════════════════
+//  FORMULAIRE DE CONTACT
+// ═══════════════════════════════════════════════════════════════════════════════
+$contact_status  = '';   // 'success' | 'error' | ''
+$contact_values  = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
+  $name    = trim(strip_tags($_POST['name']    ?? ''));
+  $email   = trim(strip_tags($_POST['email']   ?? ''));
+  $subject = trim(strip_tags($_POST['subject'] ?? ''));
+  $message = trim(strip_tags($_POST['message'] ?? ''));
+
+  $contact_values = compact('name', 'email', 'subject', 'message');
+
+  if ($name && filter_var($email, FILTER_VALIDATE_EMAIL) && $subject && $message) {
+    $to      = 'adam.bellanger.pro@gmail.com';
+    $headers = implode("\r\n", [
+      'From: Portfolio <' . $email . '>',
+      'Reply-To: ' . $email,
+      'MIME-Version: 1.0',
+      'Content-Type: text/plain; charset=UTF-8',
+    ]);
+    $body = "Nom    : $name\nEmail  : $email\nSujet  : $subject\n\n$message";
+
+    if (@mail($to, '[Portfolio] ' . $subject, $body, $headers)) {
+      $contact_status = 'success';
+      $contact_values = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
+    } else {
+      // mail() non configuré (XAMPP local) → on simule le succès en dev
+      $contact_status = 'success_dev';
+      $contact_values = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
+    }
+  } else {
+    $contact_status = 'error';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  VEILLE TECHNOLOGIQUE – Fetch RSS réel + cache 2 semaines + fallback statique
+// ═══════════════════════════════════════════════════════════════════════════════
+
+define('VEILLE_CACHE', __DIR__ . '/cache/veille_cache.json');
+define('VEILLE_TTL',   14 * 24 * 3600); // 14 jours
+
+// ── Mots-clés → catégorie, couleur, icône ─────────────────────────────────────
+$veille_keywords = [
+  'ransomware'             => ['Cybersécurité', '#ff4757', 'fa-shield-alt'],
+  'cyberattaque'           => ['Cybersécurité', '#ff4757', 'fa-shield-alt'],
+  'vulnérabilité'          => ['Cybersécurité', '#ff4757', 'fa-shield-alt'],
+  'phishing'               => ['Cybersécurité', '#ff4757', 'fa-shield-alt'],
+  'zero-day'               => ['Cybersécurité', '#ff4757', 'fa-shield-alt'],
+  'cybersécurité'          => ['Cybersécurité', '#ff4757', 'fa-shield-alt'],
+  'sécurité informatique'  => ['Cybersécurité', '#ff4757', 'fa-shield-alt'],
+  'wifi'                   => ['Réseau',         '#00d4ff', 'fa-wifi'],
+  'wi-fi'                  => ['Réseau',         '#00d4ff', 'fa-wifi'],
+  'réseau'                 => ['Réseau',         '#00d4ff', 'fa-network-wired'],
+  'routeur'                => ['Réseau',         '#00d4ff', 'fa-network-wired'],
+  'cisco'                  => ['Réseau',         '#00d4ff', 'fa-network-wired'],
+  'ipv6'                   => ['Réseau',         '#00d4ff', 'fa-network-wired'],
+  'sd-wan'                 => ['Réseau',         '#00d4ff', 'fa-network-wired'],
+  'virtualisation'         => ['Virtualisation', '#a855f7', 'fa-server'],
+  'proxmox'                => ['Virtualisation', '#a855f7', 'fa-server'],
+  'vmware'                 => ['Virtualisation', '#a855f7', 'fa-server'],
+  'docker'                 => ['Virtualisation', '#a855f7', 'fa-server'],
+  'conteneur'              => ['Virtualisation', '#a855f7', 'fa-server'],
+  'hyperviseur'            => ['Virtualisation', '#a855f7', 'fa-server'],
+  'cloud'                  => ['Cloud',          '#f97316', 'fa-cloud'],
+  'azure'                  => ['Cloud',          '#f97316', 'fa-cloud'],
+  'aws'                    => ['Cloud',          '#f97316', 'fa-cloud'],
+  'saas'                   => ['Cloud',          '#f97316', 'fa-cloud'],
+  'linux'                  => ['Systèmes',       '#22c55e', 'fa-linux'],
+  'windows server'         => ['Systèmes',       '#22c55e', 'fa-windows'],
+  'active directory'       => ['Systèmes',       '#22c55e', 'fa-server'],
+  'debian'                 => ['Systèmes',       '#22c55e', 'fa-linux'],
+  'intelligence artificielle' => ['IA & Infra',  '#e879f9', 'fa-robot'],
+  'chatgpt'                => ['IA & Infra',     '#e879f9', 'fa-robot'],
+  'llm'                    => ['IA & Infra',     '#e879f9', 'fa-robot'],
+];
+
+function veille_categorize(string $text, array $keywords): array {
+  $lower = mb_strtolower($text);
+  foreach ($keywords as $kw => $info) {
+    if (mb_strpos($lower, $kw) !== false) return $info;
+  }
+  return ['Technologie', '#00d4ff', 'fa-microchip'];
+}
+
+function veille_fetch_rss(string $url): ?\SimpleXMLElement {
+  if (function_exists('curl_init')) {
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_TIMEOUT        => 6,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_USERAGENT      => 'Mozilla/5.0 (compatible; Portfolio/1.0)',
+      CURLOPT_SSL_VERIFYPEER => false,
+    ]);
+    $data = curl_exec($ch);
+    return $data ? @simplexml_load_string($data) : null;
+  }
+  $data = @file_get_contents($url);
+  return $data ? @simplexml_load_string($data) : null;
+}
+
+function veille_get_live(array $keywords): ?array {
+  // Vérification du cache
+  if (file_exists(VEILLE_CACHE) && (time() - filemtime(VEILLE_CACHE)) < VEILLE_TTL) {
+    $c = json_decode(file_get_contents(VEILLE_CACHE), true);
+    if (is_array($c) && count($c) >= 4) return $c;
+  }
+
+  $feeds = [
+    ['url' => 'https://www.cert.ssi.gouv.fr/feed/',    'label' => 'ANSSI CERT'],
+    ['url' => 'https://www.numerama.com/feed/',         'label' => 'Numerama'],
+    ['url' => 'https://www.01net.com/rss/actualites/',  'label' => '01net'],
+    ['url' => 'https://www.lemondeinformatique.fr/flux-rss/thematique/toutes-les-actualites/rss.xml', 'label' => 'LMI'],
+  ];
+
+  $articles        = [];
+  $used_categories = [];
+
+  foreach ($feeds as $feed) {
+    if (count($articles) >= 4) break;
+    $xml = veille_fetch_rss($feed['url']);
+    if (!$xml) continue;
+
+    $items = isset($xml->channel->item) ? $xml->channel->item : [];
+    foreach ($items as $item) {
+      if (count($articles) >= 4) break;
+
+      $title    = trim((string)$item->title);
+      $desc_raw = strip_tags((string)($item->description ?? $item->summary ?? ''));
+      $desc_raw = preg_replace('/\s+/', ' ', $desc_raw);
+      $pub      = (string)($item->pubDate ?? $item->published ?? '');
+      $link     = (string)($item->link ?? '');
+
+      if (empty($title)) continue;
+
+      $cat = veille_categorize($title . ' ' . $desc_raw, $keywords);
+      if (in_array($cat[0], $used_categories)) continue; // 1 par catégorie
+      $used_categories[] = $cat[0];
+
+      $articles[] = [
+        'accent'   => $cat[1],
+        'icon'     => $cat[2],
+        'category' => $cat[0],
+        'date'     => $pub ? date('d/m/Y', strtotime($pub)) : date('d/m/Y'),
+        'title'    => $title,
+        'source'   => $feed['label'],
+        'desc'     => mb_strlen($desc_raw) > 200 ? mb_substr($desc_raw, 0, 197) . '…' : $desc_raw,
+        'link'     => $link,
+      ];
+    }
+  }
+
+  if (count($articles) >= 4) {
+    if (!is_dir(dirname(VEILLE_CACHE))) mkdir(dirname(VEILLE_CACHE), 0755, true);
+    file_put_contents(VEILLE_CACHE, json_encode(array_slice($articles, 0, 4), JSON_UNESCAPED_UNICODE));
+    return array_slice($articles, 0, 4);
+  }
+  return null;
+}
+
+// ── Fallback statique (si RSS indisponible) ────────────────────────────────────
+$veille_fallback = [
+  ['accent'=>'#ff4757','icon'=>'fa-shield-alt','category'=>'Cybersécurité','date'=>'2026','title'=>'Zero Trust Architecture','source'=>'ANSSI','desc'=>'Approche "ne jamais faire confiance, toujours vérifier" qui remplace le modèle périmétrique traditionnel. Pertinente dans un contexte de télétravail et d\'accès cloud.','link'=>''],
+  ['accent'=>'#00d4ff','icon'=>'fa-wifi','category'=>'Réseau','date'=>'2026','title'=>'Wi-Fi 7 (802.11be)','source'=>'ZDNet France','desc'=>'Nouvelle génération Wi-Fi avec des débits théoriques jusqu\'à 46 Gbps et une latence très réduite. Impact direct sur les déploiements réseau en entreprise.','link'=>''],
+  ['accent'=>'#a855f7','icon'=>'fa-server','category'=>'Virtualisation','date'=>'2026','title'=>'Proxmox VE & Conteneurisation','source'=>'LeMagIT','desc'=>'Montée en puissance de Proxmox comme alternative open source à VMware suite au rachat par Broadcom. Couplé à Docker/LXC pour une gestion flexible des workloads.','link'=>''],
+  ['accent'=>'#f97316','icon'=>'fa-cloud','category'=>'Cloud','date'=>'2026','title'=>'SASE & SD-WAN en entreprise','source'=>'Le Monde Informatique','desc'=>'Convergence du réseau et de la sécurité via le modèle SASE. Les entreprises migrent vers des architectures SD-WAN pour plus d\'agilité.','link'=>''],
+];
+
+// ── Résolution finale ──────────────────────────────────────────────────────────
+$veille_now  = veille_get_live($veille_keywords);
+$veille_live = ($veille_now !== null);
+if (!$veille_live) $veille_now = $veille_fallback;
+
+$update_label = file_exists(VEILLE_CACHE)
+  ? date('d/m/Y', filemtime(VEILLE_CACHE))
+  : date('d/m/Y');
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Adam Bellanger – Portfolio</title>
@@ -146,24 +327,6 @@
     </div>
   </div>
 
-  <!-- STATS SIDEBAR -->
-  <aside id="stats-sidebar" class="delayed-entry">
-    <div class="sidebar-stat">
-      <div class="stat-number" data-count="4">0</div>
-      <div class="stat-label">Expériences</div>
-    </div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-stat">
-      <div class="stat-number" data-count="4">0</div>
-      <div class="stat-label">Projets</div>
-    </div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-stat">
-      <div class="stat-number" data-count="2">0</div>
-      <div class="stat-label">Ans de<br>formation</div>
-    </div>
-  </aside>
-
   <!-- NAVIGATION -->
   <nav class="github-pill delayed-entry">
     <div class="nav-marker"></div>
@@ -173,6 +336,9 @@
     <a href="#competences-1" class="nav-link">Logiciel &amp; Outils</a>
     <a href="#projets" class="nav-link">Projets</a>
     <a href="#competences" class="nav-link">Compétences</a>
+    <a href="#veille" class="nav-link">Veille</a>
+    <a href="#apprentissage" class="nav-link">Apprentissage</a>
+    <a href="#contact" class="nav-link">Contact</a>
     <div class="nav-icons">
       <a href="https://ecoleiris.fr/campus/rouen" target="_blank" rel="noreferrer" title="École IRIS">
         <i class="fas fa-graduation-cap"></i>
@@ -197,6 +363,9 @@
       <div class="hero-location">
         <i class="fas fa-map-marker-alt"></i> Rouen, Normandie
       </div>
+      <a href="cv/Adam%20BELLANGER.pdf" download="CV_Adam_Bellanger.pdf" class="btn-cv">
+        <i class="fas fa-download"></i> Télécharger mon CV
+      </a>
     </div>
   </section>
 
@@ -316,16 +485,16 @@
         <h2 class="title-dev">Compétences Développement</h2>
       </div>
       <div class="custom-grid">
-        <div class="grid-item">
-          <i class="fab fa-html5" style="color: #e34c26;"></i>
+        <div class="grid-item" data-tooltip="Structuration des pages web">
+          <img src="https://cdn.simpleicons.org/html5/e34c26" alt="HTML5" class="tool-logo" />
           <span>HTML</span>
         </div>
-        <div class="grid-item">
-          <i class="fab fa-css3-alt" style="color: #264de4;"></i>
+        <div class="grid-item" data-tooltip="Mise en forme et animations">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg" alt="CSS3" class="tool-logo" />
           <span>CSS</span>
         </div>
-        <div class="grid-item">
-          <i class="fab fa-js" style="color: #f7df1e;"></i>
+        <div class="grid-item" data-tooltip="Interactivité côté client">
+          <img src="https://cdn.simpleicons.org/javascript/f7df1e" alt="JavaScript" class="tool-logo" />
           <span>JavaScript</span>
         </div>
       </div>
@@ -334,76 +503,80 @@
         <h2 class="title-tools">Mes outils / Logiciel</h2>
       </div>
       <div class="custom-grid">
-        <div class="grid-item">
-          <i class="fas fa-image" style="color: #31a8ff;"></i>
+        <div class="grid-item" data-tooltip="Retouche photo & graphisme">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/photoshop/photoshop-original.svg" alt="Photoshop" class="tool-logo" />
           <span>Photoshop</span>
         </div>
-        <div class="grid-item">
-          <i class="fas fa-cube" style="color: #e87d0d;"></i>
+        <div class="grid-item" data-tooltip="Modélisation 3D & rendu">
+          <img src="https://cdn.simpleicons.org/blender/e87d0d" alt="Blender" class="tool-logo" />
           <span>Blender</span>
         </div>
-        <div class="grid-item">
-          <i class="fas fa-code" style="color: #007acc;"></i>
+        <div class="grid-item" data-tooltip="IDE principal de développement">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" alt="VS Code" class="tool-logo" />
           <span>Visual Studio</span>
         </div>
-        <div class="grid-item">
-          <i class="fas fa-moon" style="color: #2c2255;"></i>
+        <div class="grid-item" data-tooltip="IDE Java & projets scolaires">
+          <img src="https://cdn.simpleicons.org/eclipseide/2c2255" alt="Eclipse" class="tool-logo" />
           <span>Eclipse</span>
         </div>
-        <div class="grid-item">
-          <i class="fab fa-github" style="color: #ffffff;"></i>
+        <div class="grid-item" data-tooltip="Versioning & collaboration">
+          <img src="https://cdn.simpleicons.org/github/ffffff" alt="GitHub" class="tool-logo" />
           <span>GitHub</span>
+        </div>
+        <div class="grid-item" data-tooltip="Assistant IA de développement en terminal">
+          <img src="https://cdn.simpleicons.org/anthropic/cc785c" alt="Claude Code" class="tool-logo" />
+          <span>Claude Code</span>
+        </div>
+        <div class="grid-item" data-tooltip="IDE nouvelle génération by Google">
+          <img src="https://cdn.simpleicons.org/google/4285f4" alt="Antigravity" class="tool-logo" />
+          <span>Antigravity</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- PROJETS -->
-  <section id="projets" class="delayed-entry">
-    <div class="glass-bubble-container" style="max-width: 1400px; width: 100%;">
-      <div style="text-align: center; margin-bottom: 3rem;">
-        <h2 style="color: #00d4ff;">Mes Projets</h2>
-        <p style="color: #ccc; max-width: 600px; margin: 0 auto;">
-          Cliquez sur un projet pour voir les détails.
-        </p>
+  <section id="projets" class="delayed-entry section-projets-fullwidth">
+    <div class="projets-header">
+      <h2>Mes Projets</h2>
+      <p>Cliquez sur un projet pour voir les détails.</p>
+    </div>
+
+    <div class="bubbles-grid">
+      <div class="bubble-project" onclick="openModal('modal-portfolio')">
+        <div class="bubble-content">
+          <i class="fas fa-globe project-icon-main"></i>
+          <h4 class="project-title">Portfolio 3D</h4>
+          <span class="project-tech">Three.js / WebGL</span>
+        </div>
+        <div class="bubble-glow"></div>
       </div>
 
-      <div class="bubbles-grid">
-        <div class="bubble-project" onclick="openModal('modal-portfolio')">
-          <div class="bubble-content">
-            <i class="fas fa-globe project-icon-main"></i>
-            <h4 class="project-title">Portfolio 3D</h4>
-            <span class="project-tech">Three.js / WebGL</span>
-          </div>
-          <div class="bubble-glow"></div>
+      <div class="bubble-project" onclick="openModal('modal-infra')">
+        <div class="bubble-content">
+          <i class="fas fa-network-wired project-icon-main"></i>
+          <h4 class="project-title">Infra Cisco</h4>
+          <span class="project-tech">VLAN / Routing</span>
         </div>
+        <div class="bubble-glow" style="background: rgba(255, 107, 53, 0.4);"></div>
+      </div>
 
-        <div class="bubble-project" onclick="openModal('modal-infra')">
-          <div class="bubble-content">
-            <i class="fas fa-network-wired project-icon-main"></i>
-            <h4 class="project-title">Infra Cisco</h4>
-            <span class="project-tech">VLAN / Routing</span>
-          </div>
-          <div class="bubble-glow" style="background: rgba(255, 107, 53, 0.4);"></div>
+      <div class="bubble-project" onclick="openModal('modal-scripts')">
+        <div class="bubble-content">
+          <i class="fas fa-terminal project-icon-main"></i>
+          <h4 class="project-title">Scripts Sys</h4>
+          <span class="project-tech">Bash / Python</span>
         </div>
+        <div class="bubble-glow" style="background: rgba(46, 204, 113, 0.4);"></div>
+      </div>
 
-        <div class="bubble-project" onclick="openModal('modal-scripts')">
-          <div class="bubble-content">
-            <i class="fas fa-terminal project-icon-main"></i>
-            <h4 class="project-title">Scripts Sys</h4>
-            <span class="project-tech">Bash / Python</span>
-          </div>
-          <div class="bubble-glow" style="background: rgba(46, 204, 113, 0.4);"></div>
+      <div class="bubble-project" onclick="openModal('modal-univers')">
+        <div class="bubble-content">
+          <i class="fas fa-futbol project-icon-main"></i>
+          <h4 class="project-title">ProjetUnivers ManCity</h4>
+          <span class="project-tech">PHP / MySQL / Chart.js</span>
         </div>
-
-        <div class="bubble-project" onclick="openModal('modal-univers')">
-          <div class="bubble-content">
-            <i class="fas fa-futbol project-icon-main"></i>
-            <h4 class="project-title">ProjetUnivers ManCity</h4>
-            <span class="project-tech">PHP / MySQL / Chart.js</span>
-          </div>
-          <div class="bubble-glow" style="background: rgba(108, 171, 221, 0.4);"></div>
-        </div>
+        <div class="bubble-glow" style="background: rgba(108, 171, 221, 0.4);"></div>
       </div>
     </div>
   </section>
@@ -414,7 +587,7 @@
       <div class="content-box">
         <h2>Compétences Techniques</h2>
         <div class="skills-grid">
-          <div class="skill-card">
+          <div class="skill-card" data-tooltip="Cisco, Huawei, VLANs, routage inter-VLAN">
             <h3>🌐 Réseaux &amp; Infra</h3>
             <ul>
               <li>Cisco et Huawei</li>
@@ -422,7 +595,7 @@
               <li>Solutions opérateurs</li>
             </ul>
           </div>
-          <div class="skill-card">
+          <div class="skill-card" data-tooltip="VoIP SIP, Alcatel OXO, Centrex cloud">
             <h3>📞 Téléphonie</h3>
             <ul>
               <li>Alcatel (OXO, IP)</li>
@@ -430,7 +603,7 @@
               <li>Centrex et UnyCX</li>
             </ul>
           </div>
-          <div class="skill-card">
+          <div class="skill-card" data-tooltip="VMware, Proxmox, Hyper-V, VirtualBox">
             <h3>☁️ Virtualisation</h3>
             <ul>
               <li>VMware, VirtualBox</li>
@@ -438,7 +611,7 @@
               <li>Déploiement de VMs</li>
             </ul>
           </div>
-          <div class="skill-card">
+          <div class="skill-card" data-tooltip="Windows Server, Linux Debian, supervision">
             <h3>🖥️ Systèmes</h3>
             <ul>
               <li>Windows Server</li>
@@ -446,6 +619,192 @@
               <li>Supervision</li>
             </ul>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VEILLE TECHNOLOGIQUE -->
+  <section id="veille" class="delayed-entry">
+    <div class="container">
+      <div class="content-box">
+        <h2>Veille Technologique</h2>
+        <p style="color: rgba(255,255,255,0.55); margin-bottom: 0.5rem; font-size: 0.95rem; margin-top: -1rem;">
+          Domaines surveillés activement dans le cadre de ma formation BTS SIO SISR.
+        </p>
+        <p style="color: rgba(0,212,255,0.5); font-size: 0.72rem; margin-bottom: 2rem; letter-spacing: 0.5px;">
+          <?php if ($veille_live): ?>
+            <i class="fas fa-circle" style="color:#22c55e;font-size:0.55rem;vertical-align:middle;"></i> Flux RSS live · Mis à jour le <?= $update_label ?> · Refresh automatique toutes les 2 semaines
+          <?php else: ?>
+            <i class="fas fa-circle" style="color:#f97316;font-size:0.55rem;vertical-align:middle;"></i> Contenu de référence · Actualisation au prochain accès réseau
+          <?php endif; ?>
+        </p>
+        <div class="veille-grid">
+          <?php foreach ($veille_now as $a): ?>
+          <div class="veille-card" style="--accent: <?= $a['accent'] ?>;">
+            <div class="veille-header">
+              <span class="veille-category" style="color:<?= $a['accent'] ?>;"><i class="fas <?= $a['icon'] ?>"></i> <?= $a['category'] ?></span>
+              <span class="veille-date"><?= $a['date'] ?></span>
+            </div>
+            <h3 class="veille-title"><?= htmlspecialchars($a['title']) ?></h3>
+            <p class="veille-source"><i class="fas fa-globe"></i> <?= $a['source'] ?></p>
+            <p class="veille-desc"><?= htmlspecialchars($a['desc']) ?></p>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EN COURS D'APPRENTISSAGE -->
+  <section id="apprentissage" class="delayed-entry">
+    <div class="container">
+      <div class="content-box">
+        <h2>En cours d'apprentissage</h2>
+        <p style="color: rgba(255,255,255,0.5); margin-bottom: 2.5rem; font-size: 0.9rem; margin-top: -0.8rem;">
+          Technologies que j'explore et développe activement en ce moment.
+        </p>
+        <div class="learning-grid">
+
+          <div class="learning-item">
+            <div class="learning-header">
+              <span class="learning-icon"><i class="fab fa-python"></i></span>
+              <span class="learning-name">Python</span>
+              <span class="learning-percent">90%</span>
+            </div>
+            <div class="learning-bar-track">
+              <div class="learning-bar-fill" data-width="90" style="background: linear-gradient(90deg, #3776ab, #ffd43b);"></div>
+            </div>
+            <p class="learning-desc">Scripts d'automatisation, manipulation de fichiers, initiation à la data</p>
+          </div>
+
+          <div class="learning-item">
+            <div class="learning-header">
+              <span class="learning-icon"><i class="fab fa-docker"></i></span>
+              <span class="learning-name">Docker</span>
+              <span class="learning-percent">40%</span>
+            </div>
+            <div class="learning-bar-track">
+              <div class="learning-bar-fill" data-width="40" style="background: linear-gradient(90deg, #0db7ed, #384d54);"></div>
+            </div>
+            <p class="learning-desc">Conteneurisation d'applications, docker-compose, déploiement de services</p>
+          </div>
+
+          <div class="learning-item">
+            <div class="learning-header">
+              <span class="learning-icon"><i class="fab fa-php"></i></span>
+              <span class="learning-name">PHP / SQL</span>
+              <span class="learning-percent">70%</span>
+            </div>
+            <div class="learning-bar-track">
+              <div class="learning-bar-fill" data-width="70" style="background: linear-gradient(90deg, #777bb4, #4f5b93);"></div>
+            </div>
+            <p class="learning-desc">Développement backend, PDO, authentification, CRUD complet</p>
+          </div>
+
+          <div class="learning-item">
+            <div class="learning-header">
+              <span class="learning-icon"><i class="fas fa-shield-alt"></i></span>
+              <span class="learning-name">Cybersécurité</span>
+              <span class="learning-percent">35%</span>
+            </div>
+            <div class="learning-bar-track">
+              <div class="learning-bar-fill" data-width="35" style="background: linear-gradient(90deg, #ff4757, #c0392b);"></div>
+            </div>
+            <p class="learning-desc">Bases de la sécurité réseau, pare-feu, veille ANSSI, CTF débutant</p>
+          </div>
+
+          <div class="learning-item">
+            <div class="learning-header">
+              <span class="learning-icon"><i class="fas fa-cloud"></i></span>
+              <span class="learning-name">Azure / Cloud</span>
+              <span class="learning-percent">25%</span>
+            </div>
+            <div class="learning-bar-track">
+              <div class="learning-bar-fill" data-width="25" style="background: linear-gradient(90deg, #0078d4, #005a9e);"></div>
+            </div>
+            <p class="learning-desc">Initiation aux services cloud Microsoft, VMs Azure, notions AD DS</p>
+          </div>
+
+          <div class="learning-item">
+            <div class="learning-header">
+              <span class="learning-icon"><i class="fas fa-server"></i></span>
+              <span class="learning-name">Ansible</span>
+              <span class="learning-percent">20%</span>
+            </div>
+            <div class="learning-bar-track">
+              <div class="learning-bar-fill" data-width="20" style="background: linear-gradient(90deg, #e00, #900);"></div>
+            </div>
+            <p class="learning-desc">Automatisation de configuration, playbooks, infrastructure as code</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="delayed-entry">
+    <div class="container">
+      <div class="content-box">
+        <h2>Me Contacter</h2>
+        <p style="color: rgba(255,255,255,0.5); margin-bottom: 2rem; font-size: 0.9rem; margin-top: -0.8rem;">
+          Une question, une opportunité de stage ou juste un bonjour ?
+        </p>
+
+        <?php if ($contact_status === 'success' || $contact_status === 'success_dev'): ?>
+          <div class="contact-alert contact-alert--success">
+            <i class="fas fa-check-circle"></i>
+            Message envoyé ! Je vous répondrai dès que possible.
+            <?php if ($contact_status === 'success_dev'): ?>
+              <span style="opacity:0.5; font-size:0.78rem; display:block; margin-top:4px;">(Mode local XAMPP — configurer php.ini pour l'envoi réel)</span>
+            <?php endif; ?>
+          </div>
+        <?php elseif ($contact_status === 'error'): ?>
+          <div class="contact-alert contact-alert--error">
+            <i class="fas fa-exclamation-triangle"></i>
+            Veuillez remplir tous les champs correctement.
+          </div>
+        <?php endif; ?>
+
+        <form class="contact-form" method="POST" action="#contact">
+          <div class="contact-row">
+            <div class="contact-field">
+              <label for="cf-name">Nom</label>
+              <input type="text" id="cf-name" name="name" placeholder="Votre nom"
+                     value="<?= htmlspecialchars($contact_values['name']) ?>" required autocomplete="name" />
+            </div>
+            <div class="contact-field">
+              <label for="cf-email">Email</label>
+              <input type="email" id="cf-email" name="email" placeholder="votre@email.com"
+                     value="<?= htmlspecialchars($contact_values['email']) ?>" required autocomplete="email" />
+            </div>
+          </div>
+          <div class="contact-field">
+            <label for="cf-subject">Sujet</label>
+            <input type="text" id="cf-subject" name="subject" placeholder="Ex : Proposition de stage, Question..."
+                   value="<?= htmlspecialchars($contact_values['subject']) ?>" required />
+          </div>
+          <div class="contact-field">
+            <label for="cf-message">Message</label>
+            <textarea id="cf-message" name="message" rows="5"
+                      placeholder="Votre message..."><?= htmlspecialchars($contact_values['message']) ?></textarea>
+          </div>
+          <button type="submit" name="contact_submit" class="btn-modal contact-submit">
+            <i class="fas fa-paper-plane"></i> Envoyer le message
+          </button>
+        </form>
+
+        <div class="contact-links">
+          <a href="https://www.linkedin.com/in/adam-bellanger-652919386/" target="_blank" rel="noreferrer" class="contact-link" data-tooltip="Mon profil LinkedIn">
+            <i class="fab fa-linkedin"></i> LinkedIn
+          </a>
+          <a href="https://github.com/compteproadambellanger-gif" target="_blank" rel="noreferrer" class="contact-link" data-tooltip="Mes repos GitHub">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="cv/Adam%20BELLANGER.pdf" download="CV_Adam_Bellanger.pdf" class="contact-link" data-tooltip="Télécharger mon CV PDF">
+            <i class="fas fa-file-pdf"></i> CV PDF
+          </a>
         </div>
       </div>
     </div>
