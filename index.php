@@ -201,12 +201,6 @@ $update_label = file_exists(VEILLE_CACHE)
   <!-- SCÈNE 3D (blobs + étoiles) -->
   <div class="three-container"></div>
 
-  <!-- SPLASH SCREEN -->
-  <div id="splash-screen">
-    <div class="splash-content">
-      <button id="start-btn">START</button>
-    </div>
-  </div>
 
   <!-- MODALES -->
   <div id="modal-portfolio" class="modal-overlay">
@@ -423,18 +417,20 @@ $update_label = file_exists(VEILLE_CACHE)
       <div class="content-box">
         <h2>À propos</h2>
         <p>
-          Actuellement étudiant en première année de BTS SIO (option SISR) en alternance au campus IRIS Rouen,
-          je me spécialise dans le déploiement et le maintien en condition opérationnelle d'infrastructures réseaux,
-          la virtualisation et la téléphonie d'entreprise. Passionné par l'écosystème des systèmes et réseaux,
-          je consolide quotidiennement mes compétences techniques en administration d'environnements hétérogènes
-          (Windows Server, Linux) ainsi qu'en architecture Cisco et solutions télécom professionnelles.
+          Actuellement étudiant en première année de BTS SIO (option SISR) en alternance au campus IRIS Rouen, 
+          je cultive un profil hybride entre l'administration système et le développement. 
+          Passionné par l'écosystème des réseaux, je me spécialise dans le déploiement d'infrastructures Cisco, 
+          la virtualisation et la sécurité des environnements Windows et Linux.
         </p>
         <p>
-          Mon rythme en alternance est un véritable atout qui me permet de confronter la théorie à la réalité du terrain,
-          développant ainsi mon autonomie et ma réactivité face aux incidents techniques. Toujours en veille technologique
-          active, je m'attache non seulement à assurer la disponibilité des services, mais aussi à intégrer les
-          meilleures pratiques de sécurité et d'optimisation des performances au sein des systèmes d'information
-          que j'administre.
+          Mon expertise s'étend également au développement. Côté <strong>Front-end</strong>, je m'attache à créer des 
+          interfaces immersives et performantes en utilisant des technologies comme Three.js et des animations CSS avancées 
+          pour offrir une expérience utilisateur fluide. Côté <strong>Back-end</strong>, je maîtrise la logique serveur 
+          avec PHP et la gestion de bases de données MySQL, tout en utilisant Python pour l'automatisation de tâches techniques.
+        </p>
+        <p>
+          Mon rythme en alternance chez Socacom me permet de confronter quotidiennement la théorie à la réalité du terrain, 
+          développant ainsi une forte réactivité face aux incidents et une volonté constante d'optimisation des systèmes d'information.
         </p>
       </div>
     </div>
@@ -799,6 +795,18 @@ $update_label = file_exists(VEILLE_CACHE)
               <div class="learning-bar-fill" data-width="25" style="background: linear-gradient(90deg, #0078d4, #005a9e);"></div>
             </div>
             <p class="learning-desc">Initiation aux services cloud Microsoft, VMs Azure, notions AD DS</p>
+          </div>
+
+          <div class="learning-item">
+            <div class="learning-header">
+              <span class="learning-icon"><i class="fab fa-react"></i></span>
+              <span class="learning-name">React</span>
+              <span class="learning-percent">80%</span>
+            </div>
+            <div class="learning-bar-track">
+              <div class="learning-bar-fill" data-width="80" style="background: linear-gradient(90deg, #0078d4, #005a9e);"></div>
+            </div>
+            <p class="learning-desc">Création d'interfaces utilisateur fluides et interactives</p>
           </div>
         </div>
       </div>

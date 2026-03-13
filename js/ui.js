@@ -57,39 +57,30 @@ function openModal(id) {
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  // 1) Splash – bouton START
-  const splash   = document.getElementById('splash-screen');
-  const startBtn = document.getElementById('start-btn');
+  // 1) Révélation du site au chargement
+  document.body.classList.add('site-revealed');
+  window.scrollTo({ top: 0, behavior: 'instant' });
 
-  function handleStart() {
-    if (!splash) return;
-    splash.classList.add('hidden-splash');
-    document.body.classList.add('site-revealed');
-    window.scrollTo({ top: 0, behavior: 'instant' });
+  const delayedElements = document.querySelectorAll('.delayed-entry');
+  setTimeout(() => {
+    delayedElements.forEach((el) => el.classList.add('show'));
 
-    const delayedElements = document.querySelectorAll('.delayed-entry');
-    setTimeout(() => {
-      delayedElements.forEach((el) => el.classList.add('show'));
+    // Typewriter sur le titre h1
+    const heroH1 = document.getElementById('hero-title');
+    if (heroH1) {
+      const text = heroH1.textContent;
+      heroH1.textContent = '';
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        heroH1.textContent += text[i++];
+        if (i >= text.length) clearInterval(typeInterval);
+      }, 65);
+    }
 
-      // Typewriter sur le titre h1
-      const heroH1 = document.getElementById('hero-title');
-      if (heroH1) {
-        const text = heroH1.textContent;
-        heroH1.textContent = '';
-        let i = 0;
-        const typeInterval = setInterval(() => {
-          heroH1.textContent += text[i++];
-          if (i >= text.length) clearInterval(typeInterval);
-        }, 65);
-      }
-
-      // Stagger + compteurs
-      initStagger();
-      initCounters();
-    }, 1200);
-  }
-
-  startBtn?.addEventListener('click', handleStart);
+    // Stagger + compteurs
+    initStagger();
+    initCounters();
+  }, 400);
 
   // 2) Navigation pill – marker animé
   const nav    = document.querySelector('nav.github-pill');
