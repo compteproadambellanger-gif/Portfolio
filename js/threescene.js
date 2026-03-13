@@ -181,7 +181,7 @@ function initThreeScene() {
   container.appendChild(canvas);
 
   // Blobs
-  const blob = new Blob(4.5, 0.3, 0.6, 5.3, 0.5);
+  const blob = new Blob(3, 0.3, 0.6, 4.5, 0.5);
   blob.scale.set(0, 0, 0);
   scene.add(blob);
 

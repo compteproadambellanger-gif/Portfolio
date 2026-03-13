@@ -1036,54 +1036,55 @@ nav.github-pill a.nav-link.active {
 /* EN COURS D'APPRENTISSAGE */
 .learning-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 2rem;
 }
 .learning-item {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(0, 212, 255, 0.12);
-  border-radius: 12px;
-  padding: 1.2rem 1.4rem;
-  transition: border-color 0.3s, background 0.3s;
+  border-radius: 16px;
+  padding: 2rem;
+  transition: border-color 0.3s, background 0.3s, transform 0.3s;
 }
 .learning-item:hover {
   border-color: rgba(0, 212, 255, 0.35);
-  background: rgba(0, 212, 255, 0.04);
+  background: rgba(0, 212, 255, 0.06);
+  transform: translateY(-5px);
 }
 .learning-header {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  margin-bottom: 0.7rem;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
 }
 .learning-icon {
-  font-size: 1.3rem;
+  font-size: 1.8rem;
   color: #00d4ff;
-  width: 26px;
+  width: 32px;
   text-align: center;
   flex-shrink: 0;
 }
 .learning-name {
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #fff;
   flex: 1;
 }
 .learning-percent {
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 800;
   color: #00d4ff;
   background: rgba(0, 212, 255, 0.1);
   border: 1px solid rgba(0, 212, 255, 0.25);
   border-radius: 20px;
-  padding: 2px 10px;
+  padding: 4px 14px;
 }
 .learning-bar-track {
-  height: 6px;
+  height: 10px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 99px;
   overflow: hidden;
-  margin-bottom: 0.65rem;
+  margin-bottom: 1rem;
 }
 .learning-bar-fill {
   height: 100%;
@@ -1092,9 +1093,9 @@ nav.github-pill a.nav-link.active {
   transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .learning-desc {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.45);
-  line-height: 1.5;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
   margin: 0;
 }
 

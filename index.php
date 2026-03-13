@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 define('VEILLE_CACHE', __DIR__ . '/cache/veille_cache.json');
-define('VEILLE_TTL',   14 * 24 * 3600); // 14 jours
+define('VEILLE_TTL',   7 * 24 * 3600); // 7 jours
 
 // ── Mots-clés → catégorie, couleur, icône ─────────────────────────────────────
 $veille_keywords = [
@@ -91,7 +91,7 @@ function veille_fetch_rss(string $url): ?\SimpleXMLElement {
     $ch = curl_init($url);
     curl_setopt_array($ch, [
       CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_TIMEOUT        => 6,
+      CURLOPT_TIMEOUT        => 2,
       CURLOPT_FOLLOWLOCATION => true,
       CURLOPT_USERAGENT      => 'Mozilla/5.0 (compatible; Portfolio/1.0)',
       CURLOPT_SSL_VERIFYPEER => false,
@@ -235,7 +235,7 @@ $update_label = file_exists(VEILLE_CACHE)
           rel="noreferrer"
           class="btn-modal"
         >
-          Voir le code sur GitHub
+          <i class="fab fa-github"></i> Explorer sur GitHub
         </a>
       </div>
     </div>
@@ -298,7 +298,7 @@ $update_label = file_exists(VEILLE_CACHE)
           rel="noreferrer"
           class="btn-modal"
         >
-          Voir sur GitHub
+          <i class="fab fa-github"></i> Explorer sur GitHub
         </a>
       </div>
     </div>
@@ -322,11 +322,59 @@ $update_label = file_exists(VEILLE_CACHE)
           <li>Script de surveillance des logs système avec alerte email en cas d'intrusion.</li>
           <li>Outil de déploiement rapide d'environnement LAMP.</li>
         </ul>
-        <a href="#" class="btn-modal">Voir le dépôt Git</a>
+        <a href="https://github.com/compteproadambellanger-gif" class="btn-modal"><i class="fab fa-github"></i> Explorer sur GitHub</a>
+      </div>
+    </div>
+  </div>
+  
+  <div id="modal-boutique" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <div class="modal-body">
+        <h2>Boutique en ligne Aesop</h2>
+        <div class="modal-tags">
+          <span class="modal-tag">PHP</span>
+          <span class="modal-tag">MySQL</span>
+          <span class="modal-tag">HTML/CSS</span>
+          <span class="modal-tag">JavaScript</span>
+          <span class="modal-tag">API stripe</span>
+        </div>
+        <p>
+          Ensemble de scripts php / js pour créer une boutique en ligne.
+        </p>
+        <ul>
+          <li>Création d'une base de données pour stocker les produits et les commandes.</li>
+          <li>Création d'une interface pour ajouter des produits à la boutique.</li>
+          <li>Nouveau design de la boutique Aesop</li>
+        </ul>
+        <a href="https://github.com/compteproadambellanger-gif/Aesop" class="btn-modal"><i class="fab fa-github"></i> Explorer sur GitHub</a>
       </div>
     </div>
   </div>
 
+  <div id="modal-studio" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <div class="modal-body">
+        <h2>Studio Landing Pages</h2>
+        <div class="modal-tags">
+          <span class="modal-tag">PHP / MySQL</span>
+          <span class="modal-tag">REACT.JS / JS</span>
+          <span class="modal-tag">TAILWIND CSS</span>
+          <span class="modal-tag">SERVER / VITE</span>
+        </div>
+        <p>
+          Gros Projet de création de site web pour une entreprise de création de site web.
+        </p>
+        <ul>
+          <li>création d'une base de donnée MySQL pour stocker les informations des clients et de leurs projets.</li>
+          <li>création d'une interface pour ajouter des clients et de leurs projets.</li>
+          <li>Nouveau design futuriste avec des animations fluides et des transitions rapides.</li>
+        </ul>
+        <a href="https://github.com/compteproadambellanger-gif/StudioLandingPages" class="btn-modal"><i class="fab fa-github"></i> Explorer sur GitHub</a>
+      </div>
+    </div>
+  </div>
   <!-- NAVIGATION -->
   <nav class="github-pill delayed-entry">
     <div class="nav-marker"></div>
@@ -486,7 +534,7 @@ $update_label = file_exists(VEILLE_CACHE)
       </div>
       <div class="custom-grid">
         <div class="grid-item" data-tooltip="Structuration des pages web">
-          <img src="https://cdn.simpleicons.org/html5/e34c26" alt="HTML5" class="tool-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" alt="HTML5" class="tool-logo" />
           <span>HTML</span>
         </div>
         <div class="grid-item" data-tooltip="Mise en forme et animations">
@@ -494,8 +542,16 @@ $update_label = file_exists(VEILLE_CACHE)
           <span>CSS</span>
         </div>
         <div class="grid-item" data-tooltip="Interactivité côté client">
-          <img src="https://cdn.simpleicons.org/javascript/f7df1e" alt="JavaScript" class="tool-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript" class="tool-logo" />
           <span>JavaScript</span>
+        </div>
+        <div class="grid-item" data-tooltip="Scripts et automatisation">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python" class="tool-logo" />
+          <span>Python</span>
+        </div>
+        <div class="grid-item" data-tooltip="Développement backend et base de données">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" alt="PHP" class="tool-logo" />
+          <span>PHP</span>
         </div>
       </div>
       <div class="divider"></div>
@@ -508,7 +564,7 @@ $update_label = file_exists(VEILLE_CACHE)
           <span>Photoshop</span>
         </div>
         <div class="grid-item" data-tooltip="Modélisation 3D & rendu">
-          <img src="https://cdn.simpleicons.org/blender/e87d0d" alt="Blender" class="tool-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/blender/blender-original.svg" alt="Blender" class="tool-logo" />
           <span>Blender</span>
         </div>
         <div class="grid-item" data-tooltip="IDE principal de développement">
@@ -516,19 +572,19 @@ $update_label = file_exists(VEILLE_CACHE)
           <span>Visual Studio</span>
         </div>
         <div class="grid-item" data-tooltip="IDE Java & projets scolaires">
-          <img src="https://cdn.simpleicons.org/eclipseide/2c2255" alt="Eclipse" class="tool-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/eclipse/eclipse-original.svg" alt="Eclipse" class="tool-logo" />
           <span>Eclipse</span>
         </div>
         <div class="grid-item" data-tooltip="Versioning & collaboration">
-          <img src="https://cdn.simpleicons.org/github/ffffff" alt="GitHub" class="tool-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" alt="GitHub" class="tool-logo" />
           <span>GitHub</span>
         </div>
         <div class="grid-item" data-tooltip="Assistant IA de développement en terminal">
-          <img src="https://cdn.simpleicons.org/anthropic/cc785c" alt="Claude Code" class="tool-logo" />
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/anthropic.svg" alt="Claude Code" class="tool-logo" style="filter: invert(1);" />
           <span>Claude Code</span>
         </div>
         <div class="grid-item" data-tooltip="IDE nouvelle génération by Google">
-          <img src="https://cdn.simpleicons.org/google/4285f4" alt="Antigravity" class="tool-logo" />
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Antigravity" class="tool-logo" />
           <span>Antigravity</span>
         </div>
       </div>
@@ -578,7 +634,26 @@ $update_label = file_exists(VEILLE_CACHE)
         </div>
         <div class="bubble-glow" style="background: rgba(108, 171, 221, 0.4);"></div>
       </div>
+
+      <div class="bubble-project" onclick="openModal('modal-boutique')">
+        <div class="bubble-content">
+          <i class="fas fa-store project-icon-main"></i>
+          <h4 class="project-title">Boutique en ligne</h4>
+          <span class="project-tech">PHP / MySQL / JS</span>
+        </div>
+        <div class="bubble-glow" style="background: rgba(145, 73, 223, 0.4);"></div>
+      </div>
+
+      <div class="bubble-project" onclick="openModal('modal-studio')">
+        <div class="bubble-content">
+          <i class="fas fa-rocket project-icon-main"></i>
+          <h4 class="project-title">Studio de Landing Pages</h4>
+          <span class="project-tech">PHP / MySQL / TAILWIND CSS / REACT.JS</span>
+        </div>
+        <div class="bubble-glow" style="background: rgba(179, 182, 29, 0.4);"></div>
+      </div>
     </div>
+      
   </section>
 
   <!-- COMPÉTENCES -->
@@ -634,7 +709,7 @@ $update_label = file_exists(VEILLE_CACHE)
         </p>
         <p style="color: rgba(0,212,255,0.5); font-size: 0.72rem; margin-bottom: 2rem; letter-spacing: 0.5px;">
           <?php if ($veille_live): ?>
-            <i class="fas fa-circle" style="color:#22c55e;font-size:0.55rem;vertical-align:middle;"></i> Flux RSS live · Mis à jour le <?= $update_label ?> · Refresh automatique toutes les 2 semaines
+            <i class="fas fa-circle" style="color:#22c55e;font-size:0.55rem;vertical-align:middle;"></i> Flux RSS live · Mis à jour le <?= $update_label ?> · Refresh automatique toutes les semaines
           <?php else: ?>
             <i class="fas fa-circle" style="color:#f97316;font-size:0.55rem;vertical-align:middle;"></i> Contenu de référence · Actualisation au prochain accès réseau
           <?php endif; ?>
@@ -694,10 +769,10 @@ $update_label = file_exists(VEILLE_CACHE)
             <div class="learning-header">
               <span class="learning-icon"><i class="fab fa-php"></i></span>
               <span class="learning-name">PHP / SQL</span>
-              <span class="learning-percent">70%</span>
+              <span class="learning-percent">90%</span>
             </div>
             <div class="learning-bar-track">
-              <div class="learning-bar-fill" data-width="70" style="background: linear-gradient(90deg, #777bb4, #4f5b93);"></div>
+              <div class="learning-bar-fill" data-width="90" style="background: linear-gradient(90deg, #777bb4, #4f5b93);"></div>
             </div>
             <p class="learning-desc">Développement backend, PDO, authentification, CRUD complet</p>
           </div>
@@ -725,19 +800,6 @@ $update_label = file_exists(VEILLE_CACHE)
             </div>
             <p class="learning-desc">Initiation aux services cloud Microsoft, VMs Azure, notions AD DS</p>
           </div>
-
-          <div class="learning-item">
-            <div class="learning-header">
-              <span class="learning-icon"><i class="fas fa-server"></i></span>
-              <span class="learning-name">Ansible</span>
-              <span class="learning-percent">20%</span>
-            </div>
-            <div class="learning-bar-track">
-              <div class="learning-bar-fill" data-width="20" style="background: linear-gradient(90deg, #e00, #900);"></div>
-            </div>
-            <p class="learning-desc">Automatisation de configuration, playbooks, infrastructure as code</p>
-          </div>
-
         </div>
       </div>
     </div>
