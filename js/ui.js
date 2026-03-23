@@ -163,6 +163,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Fermer modales avec Echap
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeModal();
+      if (typeof closeVeilleModal === 'function') closeVeilleModal();
+    }
+  });
+
   // 6) Scroll progress bar + scroll-to-top
   const progressBar = document.getElementById('scroll-progress');
   const scrollTopBtn = document.getElementById('scroll-top-btn');
@@ -196,12 +204,75 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   }
-  addTilt('.skill-card',    12, ' translateY(-10px)');
-  addTilt('.bubble-project', 9, ' translateY(-8px) scale(1.02)');
+  addTilt('.skill-card', 12, ' translateY(-10px)');
 
-  // 8) Stagger d'apparition des cartes
+  // 8) Carrousel projets (3 cartes visibles)
+  (function initCarousel() {
+    const track  = document.querySelector('.carousel-track');
+    const dots   = Array.from(document.querySelectorAll('.carousel-dot'));
+    const slides = track ? Array.from(track.children) : [];
+    if (!slides.length) return;
+
+    let currentIndex = 0;
+    const total = slides.length;
+
+    function updateCarousel() {
+      var prevIdx = (currentIndex - 1 + total) % total;
+      var nextIdx = (currentIndex + 1) % total;
+      slides.forEach(function (s, i) {
+        s.classList.remove('carousel-active', 'carousel-prev', 'carousel-next');
+        if (i === currentIndex)  s.classList.add('carousel-active');
+        else if (i === prevIdx)  s.classList.add('carousel-prev');
+        else if (i === nextIdx)  s.classList.add('carousel-next');
+      });
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === currentIndex); });
+    }
+
+    window.carouselMove = function (dir) {
+      currentIndex = (currentIndex + dir + total) % total;
+      updateCarousel();
+    };
+    window.carouselGoTo = function (i) {
+      currentIndex = i;
+      updateCarousel();
+    };
+
+    // Init
+    updateCarousel();
+
+    // Swipe tactile
+    let startX = 0;
+    track.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', function (e) {
+      var diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) carouselMove(diff > 0 ? 1 : -1);
+    }, { passive: true });
+
+    // Drag souris
+    var dragging = false, dragStartX = 0;
+    track.style.cursor = 'grab';
+    track.addEventListener('mousedown', function (e) {
+      dragging = true;
+      dragStartX = e.clientX;
+      track.style.cursor = 'grabbing';
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function (e) {
+      if (!dragging) return;
+      e.preventDefault();
+    });
+    document.addEventListener('mouseup', function (e) {
+      if (!dragging) return;
+      dragging = false;
+      track.style.cursor = 'grab';
+      var diff = dragStartX - e.clientX;
+      if (Math.abs(diff) > 50) carouselMove(diff > 0 ? 1 : -1);
+    });
+  })();
+
+  // 8b) Stagger d'apparition des cartes
   function initStagger() {
-    const containers = document.querySelectorAll('.skills-grid, .bubbles-grid, .custom-grid');
+    const containers = document.querySelectorAll('.skills-grid, .carousel-track, .custom-grid');
     containers.forEach(function (container) {
       const children = Array.from(container.children);
       children.forEach(function (child) { child.classList.add('stagger-child'); });

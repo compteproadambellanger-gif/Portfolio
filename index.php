@@ -149,6 +149,7 @@ function veille_get_live(array $keywords): ?array {
         'title'    => $title,
         'source'   => $feed['label'],
         'desc'     => mb_strlen($desc_raw) > 200 ? mb_substr($desc_raw, 0, 197) . '…' : $desc_raw,
+        'desc_full'=> $desc_raw,
         'link'     => $link,
       ];
     }
@@ -164,10 +165,10 @@ function veille_get_live(array $keywords): ?array {
 
 // ── Fallback statique (si RSS indisponible) ────────────────────────────────────
 $veille_fallback = [
-  ['accent'=>'#ff4757','icon'=>'fa-shield-alt','category'=>'Cybersécurité','date'=>'2026','title'=>'Zero Trust Architecture','source'=>'ANSSI','desc'=>'Approche "ne jamais faire confiance, toujours vérifier" qui remplace le modèle périmétrique traditionnel. Pertinente dans un contexte de télétravail et d\'accès cloud.','link'=>''],
-  ['accent'=>'#00d4ff','icon'=>'fa-wifi','category'=>'Réseau','date'=>'2026','title'=>'Wi-Fi 7 (802.11be)','source'=>'ZDNet France','desc'=>'Nouvelle génération Wi-Fi avec des débits théoriques jusqu\'à 46 Gbps et une latence très réduite. Impact direct sur les déploiements réseau en entreprise.','link'=>''],
-  ['accent'=>'#a855f7','icon'=>'fa-server','category'=>'Virtualisation','date'=>'2026','title'=>'Proxmox VE & Conteneurisation','source'=>'LeMagIT','desc'=>'Montée en puissance de Proxmox comme alternative open source à VMware suite au rachat par Broadcom. Couplé à Docker/LXC pour une gestion flexible des workloads.','link'=>''],
-  ['accent'=>'#f97316','icon'=>'fa-cloud','category'=>'Cloud','date'=>'2026','title'=>'SASE & SD-WAN en entreprise','source'=>'Le Monde Informatique','desc'=>'Convergence du réseau et de la sécurité via le modèle SASE. Les entreprises migrent vers des architectures SD-WAN pour plus d\'agilité.','link'=>''],
+  ['accent'=>'#ff4757','icon'=>'fa-shield-alt','category'=>'Cybersécurité','date'=>'2026','title'=>'Zero Trust Architecture','source'=>'ANSSI','desc'=>'Approche "ne jamais faire confiance, toujours vérifier" qui remplace le modèle périmétrique traditionnel. Pertinente dans un contexte de télétravail et d\'accès cloud.','desc_full'=>'Approche "ne jamais faire confiance, toujours vérifier" qui remplace le modèle périmétrique traditionnel. Pertinente dans un contexte de télétravail et d\'accès cloud.','link'=>''],
+  ['accent'=>'#00d4ff','icon'=>'fa-wifi','category'=>'Réseau','date'=>'2026','title'=>'Wi-Fi 7 (802.11be)','source'=>'ZDNet France','desc'=>'Nouvelle génération Wi-Fi avec des débits théoriques jusqu\'à 46 Gbps et une latence très réduite. Impact direct sur les déploiements réseau en entreprise.','desc_full'=>'Nouvelle génération Wi-Fi avec des débits théoriques jusqu\'à 46 Gbps et une latence très réduite. Impact direct sur les déploiements réseau en entreprise.','link'=>''],
+  ['accent'=>'#a855f7','icon'=>'fa-server','category'=>'Virtualisation','date'=>'2026','title'=>'Proxmox VE & Conteneurisation','source'=>'LeMagIT','desc'=>'Montée en puissance de Proxmox comme alternative open source à VMware suite au rachat par Broadcom. Couplé à Docker/LXC pour une gestion flexible des workloads.','desc_full'=>'Montée en puissance de Proxmox comme alternative open source à VMware suite au rachat par Broadcom. Couplé à Docker/LXC pour une gestion flexible des workloads.','link'=>''],
+  ['accent'=>'#f97316','icon'=>'fa-cloud','category'=>'Cloud','date'=>'2026','title'=>'SASE & SD-WAN en entreprise','source'=>'Le Monde Informatique','desc'=>'Convergence du réseau et de la sécurité via le modèle SASE. Les entreprises migrent vers des architectures SD-WAN pour plus d\'agilité.','desc_full'=>'Convergence du réseau et de la sécurité via le modèle SASE. Les entreprises migrent vers des architectures SD-WAN pour plus d\'agilité.','link'=>''],
 ];
 
 // ── Résolution finale ──────────────────────────────────────────────────────────
@@ -366,6 +367,63 @@ $update_label = file_exists(VEILLE_CACHE)
           <li>Nouveau design futuriste avec des animations fluides et des transitions rapides.</li>
         </ul>
         <a href="https://github.com/compteproadambellanger-gif/StudioLandingPages" class="btn-modal"><i class="fab fa-github"></i> Explorer sur GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-crypto" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <div class="modal-body">
+        <h2>CryptoBourse Trading</h2>
+        <div class="modal-tags">
+          <span class="modal-tag">JavaScript</span>
+          <span class="modal-tag">PHP</span>
+          <span class="modal-tag">CSS</span>
+          <span class="modal-tag">Client / Server</span>
+        </div>
+        <p>
+          Simulateur de trading complet pour les cryptomonnaies et les marchés boursiers.
+          Architecture client-serveur avec un frontend JavaScript et un backend PHP.
+        </p>
+        <p>
+          <strong>Fonctionnalités :</strong><br>
+          – Simulation d'achat/vente de cryptomonnaies en temps réel.<br>
+          – Suivi de portefeuille et historique des transactions.<br>
+          – Interface de trading avec graphiques et données de marché.
+        </p>
+        <a href="https://github.com/AdamBellanger/CryptoBourseTrading" target="_blank" rel="noreferrer" class="btn-modal">
+          <i class="fab fa-github"></i> Explorer sur GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-floatsniper" class="modal-overlay">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <div class="modal-body">
+        <h2>FloatSniper</h2>
+        <div class="modal-tags">
+          <span class="modal-tag">PHP</span>
+          <span class="modal-tag">MySQL</span>
+          <span class="modal-tag">APIs externes</span>
+          <span class="modal-tag">CLI / Cron</span>
+        </div>
+        <p>
+          Plateforme complète d'analyse et de sniping de skins multi-marchés (Steam, CSFloat, Skinport...).
+          Le projet repose sur une architecture backend PHP robuste couplée à une base de données MySQL.
+        </p>
+        <p>
+          <strong>Fonctionnalités :</strong><br>
+          – Scans automatisés via CLI et alertes Discord en temps réel.<br>
+          – Suivi des historiques de prix et Tracker personnel.<br>
+          – Espace membre avec abonnements Stripe/PayPal/Coinbase, avec sécurité 2FA.<br>
+          – Comparateur multi-marchés sollicitant de nombreuses API externes.
+        </p>
+        <a href="https://github.com/AdamBellanger/FloatSniper" target="_blank" rel="noreferrer" class="btn-modal">
+          <i class="fab fa-github"></i> Explorer sur GitHub
+        </a>
       </div>
     </div>
   </div>
@@ -594,60 +652,103 @@ $update_label = file_exists(VEILLE_CACHE)
       <p>Cliquez sur un projet pour voir les détails.</p>
     </div>
 
-    <div class="bubbles-grid">
-      <div class="bubble-project" onclick="openModal('modal-portfolio')">
-        <div class="bubble-content">
-          <i class="fas fa-globe project-icon-main"></i>
-          <h4 class="project-title">Portfolio 3D</h4>
-          <span class="project-tech">Three.js / WebGL</span>
+    <div class="carousel-wrapper">
+      <button class="carousel-arrow carousel-prev" onclick="carouselMove(-1)" aria-label="Projet précédent">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <div class="carousel-track-container">
+        <div class="carousel-track">
+
+          <div class="bubble-project" onclick="openModal('modal-portfolio')">
+            <div class="bubble-content">
+              <i class="fas fa-globe project-icon-main"></i>
+              <h4 class="project-title">Portfolio 3D</h4>
+              <span class="project-tech">Three.js / WebGL</span>
+            </div>
+            <div class="bubble-glow"></div>
+          </div>
+
+          <div class="bubble-project" onclick="openModal('modal-infra')">
+            <div class="bubble-content">
+              <i class="fas fa-network-wired project-icon-main"></i>
+              <h4 class="project-title">Infra Cisco</h4>
+              <span class="project-tech">VLAN / Routing</span>
+            </div>
+            <div class="bubble-glow" style="background: rgba(255, 107, 53, 0.4);"></div>
+          </div>
+
+          <div class="bubble-project" onclick="openModal('modal-scripts')">
+            <div class="bubble-content">
+              <i class="fas fa-terminal project-icon-main"></i>
+              <h4 class="project-title">Scripts Sys</h4>
+              <span class="project-tech">Bash / Python</span>
+            </div>
+            <div class="bubble-glow" style="background: rgba(46, 204, 113, 0.4);"></div>
+          </div>
+
+          <div class="bubble-project" onclick="openModal('modal-univers')">
+            <div class="bubble-content">
+              <i class="fas fa-futbol project-icon-main"></i>
+              <h4 class="project-title">ProjetUnivers ManCity</h4>
+              <span class="project-tech">PHP / MySQL / Chart.js</span>
+            </div>
+            <div class="bubble-glow" style="background: rgba(108, 171, 221, 0.4);"></div>
+          </div>
+
+          <div class="bubble-project" onclick="openModal('modal-boutique')">
+            <div class="bubble-content">
+              <i class="fas fa-store project-icon-main"></i>
+              <h4 class="project-title">Boutique en ligne</h4>
+              <span class="project-tech">PHP / MySQL / JS</span>
+            </div>
+            <div class="bubble-glow" style="background: rgba(145, 73, 223, 0.4);"></div>
+          </div>
+
+          <div class="bubble-project" onclick="openModal('modal-studio')">
+            <div class="bubble-content">
+              <i class="fas fa-rocket project-icon-main"></i>
+              <h4 class="project-title">Studio Landing Pages</h4>
+              <span class="project-tech">React / Tailwind / PHP</span>
+            </div>
+            <div class="bubble-glow" style="background: rgba(179, 182, 29, 0.4);"></div>
+          </div>
+
+          <div class="bubble-project" onclick="openModal('modal-crypto')">
+            <div class="bubble-content">
+              <i class="fas fa-chart-line project-icon-main"></i>
+              <h4 class="project-title">CryptoBourse Trading</h4>
+              <span class="project-tech">JavaScript / PHP</span>
+            </div>
+            <div class="bubble-glow" style="background: rgba(247, 147, 26, 0.4);"></div>
+          </div>
+
+          <div class="bubble-project" onclick="openModal('modal-floatsniper')">
+            <div class="bubble-content">
+              <i class="fas fa-crosshairs project-icon-main"></i>
+              <h4 class="project-title">FloatSniper</h4>
+              <span class="project-tech">PHP / MySQL / API</span>
+            </div>
+            <div class="bubble-glow" style="background: rgba(255, 71, 87, 0.4);"></div>
+          </div>
+
         </div>
-        <div class="bubble-glow"></div>
       </div>
 
-      <div class="bubble-project" onclick="openModal('modal-infra')">
-        <div class="bubble-content">
-          <i class="fas fa-network-wired project-icon-main"></i>
-          <h4 class="project-title">Infra Cisco</h4>
-          <span class="project-tech">VLAN / Routing</span>
-        </div>
-        <div class="bubble-glow" style="background: rgba(255, 107, 53, 0.4);"></div>
-      </div>
+      <button class="carousel-arrow carousel-next" onclick="carouselMove(1)" aria-label="Projet suivant">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
 
-      <div class="bubble-project" onclick="openModal('modal-scripts')">
-        <div class="bubble-content">
-          <i class="fas fa-terminal project-icon-main"></i>
-          <h4 class="project-title">Scripts Sys</h4>
-          <span class="project-tech">Bash / Python</span>
-        </div>
-        <div class="bubble-glow" style="background: rgba(46, 204, 113, 0.4);"></div>
-      </div>
-
-      <div class="bubble-project" onclick="openModal('modal-univers')">
-        <div class="bubble-content">
-          <i class="fas fa-futbol project-icon-main"></i>
-          <h4 class="project-title">ProjetUnivers ManCity</h4>
-          <span class="project-tech">PHP / MySQL / Chart.js</span>
-        </div>
-        <div class="bubble-glow" style="background: rgba(108, 171, 221, 0.4);"></div>
-      </div>
-
-      <div class="bubble-project" onclick="openModal('modal-boutique')">
-        <div class="bubble-content">
-          <i class="fas fa-store project-icon-main"></i>
-          <h4 class="project-title">Boutique en ligne</h4>
-          <span class="project-tech">PHP / MySQL / JS</span>
-        </div>
-        <div class="bubble-glow" style="background: rgba(145, 73, 223, 0.4);"></div>
-      </div>
-
-      <div class="bubble-project" onclick="openModal('modal-studio')">
-        <div class="bubble-content">
-          <i class="fas fa-rocket project-icon-main"></i>
-          <h4 class="project-title">Studio de Landing Pages</h4>
-          <span class="project-tech">PHP / MySQL / TAILWIND CSS / REACT.JS</span>
-        </div>
-        <div class="bubble-glow" style="background: rgba(179, 182, 29, 0.4);"></div>
-      </div>
+    <div class="carousel-dots">
+      <span class="carousel-dot active" onclick="carouselGoTo(0)"></span>
+      <span class="carousel-dot" onclick="carouselGoTo(1)"></span>
+      <span class="carousel-dot" onclick="carouselGoTo(2)"></span>
+      <span class="carousel-dot" onclick="carouselGoTo(3)"></span>
+      <span class="carousel-dot" onclick="carouselGoTo(4)"></span>
+      <span class="carousel-dot" onclick="carouselGoTo(5)"></span>
+      <span class="carousel-dot" onclick="carouselGoTo(6)"></span>
+      <span class="carousel-dot" onclick="carouselGoTo(7)"></span>
     </div>
       
   </section>
@@ -711,8 +812,8 @@ $update_label = file_exists(VEILLE_CACHE)
           <?php endif; ?>
         </p>
         <div class="veille-grid">
-          <?php foreach ($veille_now as $a): ?>
-          <div class="veille-card" style="--accent: <?= $a['accent'] ?>;">
+          <?php foreach ($veille_now as $i => $a): ?>
+          <div class="veille-card" style="--accent: <?= $a['accent'] ?>; cursor:pointer;" onclick="openVeilleModal(<?= $i ?>)">
             <div class="veille-header">
               <span class="veille-category" style="color:<?= $a['accent'] ?>;"><i class="fas <?= $a['icon'] ?>"></i> <?= $a['category'] ?></span>
               <span class="veille-date"><?= $a['date'] ?></span>
@@ -723,6 +824,49 @@ $update_label = file_exists(VEILLE_CACHE)
           </div>
           <?php endforeach; ?>
         </div>
+
+        <!-- Modale Veille -->
+        <div id="modal-veille" class="modal-overlay">
+          <div class="modal-content">
+            <button class="close-modal" onclick="closeVeilleModal()">&times;</button>
+            <div class="modal-body">
+              <span id="veille-modal-category" style="font-size:0.85rem;font-weight:600;letter-spacing:0.5px;"></span>
+              <h2 id="veille-modal-title" style="margin-top:0.5rem;"></h2>
+              <p id="veille-modal-source" style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-bottom:0.3rem;"></p>
+              <p id="veille-modal-date" style="color:rgba(255,255,255,0.3);font-size:0.8rem;margin-bottom:1.5rem;"></p>
+              <p id="veille-modal-desc" style="color:rgba(255,255,255,0.75);line-height:1.8;font-size:0.95rem;"></p>
+              <a id="veille-modal-link" href="#" target="_blank" rel="noreferrer" class="btn-modal" style="display:none;margin-top:1.5rem;">
+                <i class="fas fa-external-link-alt"></i> Lire l'article complet
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <script>
+        const veilleData = <?= json_encode(array_values($veille_now), JSON_UNESCAPED_UNICODE | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+        function openVeilleModal(i) {
+          const a = veilleData[i];
+          if (!a) return;
+          document.getElementById('veille-modal-category').innerHTML = '<i class="fas ' + a.icon + '"></i> ' + a.category;
+          document.getElementById('veille-modal-category').style.color = a.accent;
+          document.getElementById('veille-modal-title').textContent = a.title;
+          document.getElementById('veille-modal-source').innerHTML = '<i class="fas fa-globe"></i> ' + a.source;
+          document.getElementById('veille-modal-date').textContent = a.date;
+          document.getElementById('veille-modal-desc').textContent = a.desc_full || a.desc;
+          const linkEl = document.getElementById('veille-modal-link');
+          if (a.link) { linkEl.href = a.link; linkEl.style.display = 'inline-block'; }
+          else { linkEl.style.display = 'none'; }
+          document.getElementById('modal-veille').classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+        function closeVeilleModal() {
+          document.getElementById('modal-veille').classList.remove('active');
+          document.body.style.overflow = '';
+        }
+        document.getElementById('modal-veille').addEventListener('click', function(e) {
+          if (e.target === this) closeVeilleModal();
+        });
+        </script>
       </div>
     </div>
   </section>

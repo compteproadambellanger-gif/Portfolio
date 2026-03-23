@@ -463,17 +463,130 @@ h2 {
   margin: 0;
 }
 
-/* PROJETS – BULLES */
-.bubbles-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+/* PROJETS – CARROUSEL 3D */
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   width: 100%;
+  position: relative;
 }
+.carousel-track-container {
+  width: 70%;
+  max-width: 800px;
+  flex-shrink: 0;
+  overflow: visible;
+  position: relative;
+  height: 320px;
+}
+.carousel-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.carousel-track .bubble-project {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  min-height: 280px;
+  transform: translate(-50%, -50%) scale(0.65);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* Pas de transition par défaut — la disparition est instantanée */
+  transition: none;
+  z-index: 0;
+}
+.carousel-track .bubble-project.carousel-active,
+.carousel-track .bubble-project.carousel-prev,
+.carousel-track .bubble-project.carousel-next {
+  transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 0.55s;
+}
+.carousel-track .bubble-project.carousel-active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 3;
+}
+.carousel-track .bubble-project.carousel-prev {
+  transform: translate(-110%, -50%) scale(0.82);
+  opacity: 0.4;
+  visibility: visible;
+  pointer-events: none;
+  z-index: 2;
+  filter: brightness(0.5);
+}
+.carousel-track .bubble-project.carousel-next {
+  transform: translate(10%, -50%) scale(0.82);
+  opacity: 0.4;
+  visibility: visible;
+  pointer-events: none;
+  z-index: 2;
+  filter: brightness(0.5);
+}
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  background: rgba(15, 15, 20, 0.9);
+  color: #00d4ff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+.carousel-prev { left: 2%; }
+.carousel-next { right: 2%; }
+.carousel-arrow:hover {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.6);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.carousel-dot.active {
+  background: #00d4ff;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  transform: scale(1.2);
+}
+.carousel-dot:hover {
+  background: rgba(0, 212, 255, 0.5);
+}
+@media (max-width: 900px) {
+  .carousel-track .bubble-project { width: 55%; }
+  .carousel-track .bubble-project.carousel-prev { transform: translate(-115%, -50%) scale(0.75); }
+  .carousel-track .bubble-project.carousel-next { transform: translate(15%, -50%) scale(0.75); }
+}
+
 .bubble-project {
   position: relative;
   width: 100%;
-  min-height: 260px;
+  min-height: 280px;
   border-radius: 20px;
   background: rgba(15, 15, 20, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -494,10 +607,10 @@ h2 {
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  padding: 2.5rem;
+  padding: 2.5rem 2rem;
 }
 .project-icon-main {
-  font-size: 4rem;
+  font-size: 3.5rem;
   color: #fff;
   margin-bottom: 5px;
   transition: color 0.3s, transform 0.3s;
@@ -517,7 +630,9 @@ h2 {
   letter-spacing: 1.5px;
 }
 @media (max-width: 768px) {
-  .bubbles-grid { grid-template-columns: 1fr; }
+  .carousel-arrow { width: 40px; height: 40px; font-size: 1rem; }
+  .carousel-wrapper { gap: 0.5rem; }
+  .carousel-track .bubble-project { width: 70%; }
 }
 .bubble-glow {
   position: absolute;
@@ -548,19 +663,20 @@ h2 {
   pointer-events: none;
   z-index: 3;
 }
-.bubble-project:hover {
+.carousel-track .bubble-project.carousel-active:hover {
   border-color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 12px 40px rgba(0, 212, 255, 0.2);
+  transform: translate(-50%, -50%) scale(1.03);
 }
-.bubble-project:hover::before {
+.carousel-track .bubble-project.carousel-active:hover::before {
   animation: shine 0.7s ease-in-out 1;
 }
-.bubble-project:hover .bubble-glow {
+.carousel-track .bubble-project.carousel-active:hover .bubble-glow {
   opacity: 0.5;
   width: 150%; height: 150%;
 }
-.bubble-project:hover .project-icon-main {
+.carousel-track .bubble-project.carousel-active:hover .project-icon-main {
   color: #00d4ff;
   transform: scale(1.1);
 }
